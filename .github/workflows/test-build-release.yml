@@ -20,11 +20,11 @@ jobs:
 
       - name: Build web
         run: |
-          # cd ${GITHUB_WORKSPACE}/web
-          # npm install
-          # npm run build
-          # rm -rf ../server/web/web
-          # mv web ../server/web/
+          cd ${GITHUB_WORKSPACE}/web
+          npm install
+          npm run build
+          rm -rf ../server/web/web
+          mv web ../server/web/
 
       - name: Build server
         run: |
@@ -33,6 +33,7 @@ jobs:
           echo $GOROOT
           echo "GOOS: $GOOS, GOARCH: $GOARCH"
 
+          GOROOT="/opt/hostedtoolcache/go/1.22.2/x64"
           sed -i '/SIGTERM = Signal(0xf)/a\SIGUSR1 = Signal(16)\nSIGUSR2 = Signal(17)\nSIGTSTP = Signal(18)\nSIGSTOP = Signal(19)' ${GOROOT}/src/syscall/types_windows.go
           sed -i '/15: "terminated",/a\16: "SIGUSR1",\n17: "SIGUSR2",\n18: "SIGTSTP",\n19: "SIGSTOP",' ${GOROOT}/src/syscall/types_windows.go
           sed -i '$a\func Kill(...interface{}) error { return nil;}' ${GOROOT}/src/syscall/types_windows.go
