@@ -28,6 +28,8 @@ jobs:
 
       - name: Build server
         run: |
+          go version
+          go env
           sed -i '/SIGTERM = Signal(0xf)/a\SIGUSR1 = Signal(16)\nSIGUSR2 = Signal(17)\nSIGTSTP = Signal(18)\nSIGSTOP = Signal(19)' /usr/local/go/src/syscall/types_windows.go
           sed -i '/15: "terminated",/a\16: "SIGUSR1",\n17: "SIGUSR2",\n18: "SIGTSTP",\n19: "SIGSTOP",' /usr/local/go/src/syscall/types_windows.go
           sed -i '$a\func Kill(...interface{}) error { return nil;}' /usr/local/go/src/syscall/types_windows.go
