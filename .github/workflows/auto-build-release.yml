@@ -43,7 +43,7 @@ jobs:
           npm install
           npm run build
           rm -rf ../server/web/web
-          mv web ../server/web/
+          cp -r web ../server/web/
           zip  AirGo-web-${{ steps.get_version.outputs.VERSION }}.zip web
 
 
