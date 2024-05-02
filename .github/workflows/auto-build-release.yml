@@ -58,28 +58,6 @@ jobs:
           cd ${GITHUB_WORKSPACE}/server
           sed -i 's/old-version/${{ steps.get_version.outputs.VERSION }}/g' ./constant/index.go
 
-      - name: Set go 1
-        uses: actions/setup-go@v4
-        with:
-          go-version: '1.22.2'
-
-      - name: Set go 2
-        run: |
-          GOROOT=''
-          go env > vm
-          while read -r line
-          do
-          if [[ "$line" =~ ^GOROOT.* ]];then
-             GOROOT=$(echo "$line" | cut -d "'" -f2)
-             break
-          fi
-          done < vm
-          rm -r vm
-          sed -i '/SIGTERM = Signal(0xf)/a\SIGUSR1 = Signal(16)\nSIGUSR2 = Signal(17)\nSIGTSTP = Signal(18)\nSIGSTOP = Signal(19)' ${GOROOT}/src/syscall/types_windows.go
-          sed -i '/15: "terminated",/a\16: "SIGUSR1",\n17: "SIGUSR2",\n18: "SIGTSTP",\n19: "SIGSTOP",' ${GOROOT}/src/syscall/types_windows.go
-          sed -i '$a\func Kill(...interface{}) error { return nil;}' ${GOROOT}/src/syscall/types_windows.go
-
-
       - name: Build web
         run: |
           cd ${GITHUB_WORKSPACE}/web
@@ -98,6 +76,6 @@ jobs:
           project_path: server
           binary_name: AirGo
           extra_files: LICENSE server/config.yaml
-          pre_command: export CGO_ENABLED=0
+          pre_command: bash ${GITHUB_WORKSPACE}/server/scripts/pre_command_actions.sh
           build_flags: -trimpath
           ldflags: -s -w
